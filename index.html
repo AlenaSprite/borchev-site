@@ -54,11 +54,11 @@
     .process{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
     .step{padding:18px 16px;border:1px dashed rgba(255,255,255,.14);border-radius:14px}
 
-    /* Modern drag carousel */
+    /* Scroll-snap carousel */
     .carousel{position:relative;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:8px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));box-shadow:0 8px 30px rgba(0,0,0,.35)}
-    .viewport{overflow:hidden;border-radius:12px}
-    .track{display:flex;gap:12px;will-change:transform;cursor:grab;touch-action:pan-y;user-select:none}
-    .slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;min-height:56vh;background:#0E1524;border-radius:12px}
+    .viewport{overflow-x:auto;overflow-y:hidden;border-radius:12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+    .track{display:flex;gap:12px;user-select:none}
+    .slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;min-height:56vh;background:#0E1524;border-radius:12px;scroll-snap-align:start}
     .slide img{max-height:56vh;border-radius:12px;border:1px solid rgba(255,255,255,.08);user-select:none;pointer-events:none}
     .dots{display:flex;gap:6px;justify-content:center;margin:10px 0 4px}
     .dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:transparent;cursor:pointer}
@@ -160,14 +160,14 @@
       </div>
     </section>
 
-    <!-- Work: carousels -->
+    <!-- Work: scroll-snap carousels -->
     <section id="work" class="container">
       <h2 data-i18n="work.title">Work</h2>
 
       <div class="work-block" data-cat="street">
         <div class="tag" data-i18n="work.street">Street Art</div>
         <div id="street-carousel" class="carousel">
-          <div class="viewport"><div class="track" id="street-track"></div></div>
+          <div class="viewport" id="street-viewport"><div class="track" id="street-track"></div></div>
           <div class="dots" id="street-dots"></div>
         </div>
       </div>
@@ -175,7 +175,7 @@
       <div class="work-block" data-cat="retouch" style="margin-top:26px">
         <div class="tag" data-i18n="work.retouch">Photo & Retouch</div>
         <div id="retouch-carousel" class="carousel">
-          <div class="viewport"><div class="track" id="retouch-track"></div></div>
+          <div class="viewport" id="retouch-viewport"><div class="track" id="retouch-track"></div></div>
           <div class="dots" id="retouch-dots"></div>
         </div>
       </div>
@@ -294,112 +294,33 @@
       "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8407.JPG?raw=true"
     ];
 
-    // Build draggable carousel with Pointer Events (smooth swipe + momentum)
-    function makeCarousel(trackEl, dotsEl, urls){
-      const viewport = trackEl.parentElement;
-      // slides
+    // Build scroll-snap carousel
+    function buildCarousel(viewport, track, dots, urls){
       urls.forEach(u=>{
         const slide=document.createElement('div'); slide.className='slide';
         const img=new Image(); img.src=u; img.alt='slide'; img.draggable=false;
-        slide.appendChild(img); trackEl.appendChild(slide);
-        slide.addEventListener('click',()=>openLightbox(urls, [...trackEl.children].indexOf(slide)));
+        slide.appendChild(img); track.appendChild(slide);
+        slide.addEventListener('click',()=>openLightbox(urls, [...track.children].indexOf(slide)));
       });
-      // dots
+      // dots + control
+      function gap(){ return parseFloat(getComputedStyle(track).gap) || 0; }
+      function slideW(){ return viewport.clientWidth + gap(); }
       urls.forEach((_,i)=>{
-        const d=document.createElement('button'); d.className='dot'; dotsEl.appendChild(d);
-        d.addEventListener('click',()=>goTo(i));
+        const d=document.createElement('button'); d.className='dot'; dots.appendChild(d);
+        d.addEventListener('click',()=> viewport.scrollTo({left: i * slideW(), behavior:'smooth'}));
       });
-
-      let index=0, x=0, startX=0, startY=0, isDown=false, vx=0, lastT=0, lastX=0, raf=null, locked=false;
-      const slideW = ()=>viewport.clientWidth + 12; // include gap between slides
-      function setX(val){ x=val; trackEl.style.transform=`translateX(${x}px)`; }
-      function clamp(val){
-        const max=0; const min=-(slideW()*(urls.length-1));
-        return Math.max(Math.min(val,max),min);
+      function updateDots(){
+        const i=Math.round(viewport.scrollLeft / slideW());
+        [...dots.children].forEach((d,k)=>d.classList.toggle('active',k===i));
       }
-      function updateDots(){ [...dotsEl.children].forEach((d,k)=>d.classList.toggle('active',k===index)); }
-      function goTo(i){
-        index = Math.max(0, Math.min(urls.length-1, i));
-        x = -index * slideW();
-        trackEl.style.transition='transform .35s cubic-bezier(.22,.61,.36,1)';
-        setX(x);
-        setTimeout(()=>{ trackEl.style.transition=''; }, 360);
-        updateDots();
-      }
-      function snap(){
-        const i = Math.round(-x / slideW());
-        goTo(i);
-      }
-      function inertia(){
-        cancelAnimationFrame(raf);
-        function frame(t){
-          if(!lastT) lastT=t;
-          const dt=Math.min(32, t-lastT);
-          lastT=t;
-          vx *= 0.94;
-          x += vx * dt;
-          if(Math.abs(vx)<0.02){ snap(); return; }
-          if(x>0 || x<-(slideW()*(urls.length-1))){ vx*=0.6; } // edge resistance
-          setX(x);
-          raf=requestAnimationFrame(frame);
-        }
-        raf=requestAnimationFrame(frame);
-      }
-
-      function onPointerDown(e){
-        isDown=true; locked=false; trackEl.setPointerCapture?.(e.pointerId);
-        trackEl.style.cursor='grabbing';
-        startX=e.clientX; startY=e.clientY;
-        lastX=startX; lastT=performance.now(); vx=0;
-        cancelAnimationFrame(raf);
-      }
-      function onPointerMove(e){
-        if(!isDown) return;
-        const dx = e.clientX - lastX;
-        const dy = e.clientY - startY;
-        if(!locked){
-          if(Math.abs(e.clientX-startX)>8 && Math.abs(e.clientX-startX) > Math.abs(dy)){
-            locked=true;
-          }else{
-            return; // allow vertical scroll
-          }
-        }
-        if(e.cancelable) e.preventDefault(); // stop page from scrolling when locked
-        const dt = Math.max(1, performance.now() - lastT);
-        vx = dx / dt;
-        lastX = e.clientX; lastT = performance.now();
-        setX(clamp(x + dx));
-      }
-      function onPointerUp(e){
-        if(!isDown) return;
-        isDown=false; trackEl.releasePointerCapture?.(e.pointerId);
-        trackEl.style.cursor='grab';
-        if(!locked){ return; } // no horizontal drag happened
-        // If quick flick or moved more than 25% width — change slide accordingly
-        const w = slideW();
-        const moved = -x - index*w;
-        let next = index;
-        if(Math.abs(vx) > 0.6 || Math.abs(moved) > w*0.25){
-          next = moved > 0 ? index+1 : index-1;
-        }
-        goTo(next);
-      }
-
-      // Pointer events (covers mouse + touch)
-      trackEl.addEventListener('pointerdown', onPointerDown, {passive:true});
-      trackEl.addEventListener('pointermove', onPointerMove, {passive:false});
-      trackEl.addEventListener('pointerup', onPointerUp, {passive:true});
-      trackEl.addEventListener('pointercancel', onPointerUp, {passive:true});
-      trackEl.addEventListener('lostpointercapture', ()=>{ isDown=false; });
-
+      viewport.addEventListener('scroll', ()=>{ requestAnimationFrame(updateDots); });
+      window.addEventListener('resize', updateDots);
       // init
-      setX(0); goTo(0);
-      window.addEventListener('resize',()=>goTo(index));
+      viewport.scrollLeft = 0; updateDots();
     }
 
-    // Build carousels
-    makeCarousel(document.getElementById('street-track'), document.getElementById('street-dots'), streetURLs);
-    makeCarousel(document.getElementById('retouch-track'), document.getElementById('retouch-dots'), retouchURLs);
+    buildCarousel(document.getElementById('street-viewport'), document.getElementById('street-track'), document.getElementById('street-dots'), streetURLs);
+    buildCarousel(document.getElementById('retouch-viewport'), document.getElementById('retouch-track'), document.getElementById('retouch-dots'), retouchURLs);
 
     // Lightbox + swipe + zoom/pan
     const lb=document.getElementById('lightbox');
