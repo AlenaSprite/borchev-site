@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BORCHOV — Street Art & Retouch</title>
+  <title>BORCHOV — Street Art & Photo & Retouch</title>
   <meta name="description" content="Borchev (Борщев) — street art, photography & retouch portfolio. Irvine, CA." />
   <style>
     :root{
@@ -18,7 +18,6 @@
     a{color:inherit;text-decoration:none}
     img{max-width:100%;display:block}
     .container{width:min(1200px,92vw);margin-inline:auto}
-
     header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(10,15,26,.95),rgba(10,15,26,.75) 80%,rgba(10,15,26,0));backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.06)}
     .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
     .logo{font-weight:800;letter-spacing:.18em}
@@ -28,38 +27,38 @@
     .lang-switch{display:flex;gap:8px;align-items:center}
     .pill{border:1px solid rgba(255,255,255,.14);padding:6px 10px;border-radius:999px;cursor:pointer;user-select:none}
     .pill.active{border-color:var(--accent);box-shadow:var(--accent-glow)}
-
     .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:1px solid rgba(255,255,255,.14);border-radius:12px;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease}
     .btn:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:var(--accent-glow)}
     .btn.accent{background:linear-gradient(180deg,rgba(138,154,91,.16),rgba(138,154,91,.06));border-color:rgba(138,154,91,.65)}
-
     section{padding:72px 0}
     h1,h2,h3{margin:0 0 12px}
     .muted{color:var(--muted)}
     .tag{color:var(--accent);text-transform:uppercase;letter-spacing:.18em;font-size:.76rem}
-
     .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:center;min-height:72vh}
     .hero h1{font-size:clamp(28px,4.4vw,52px);line-height:1.05}
     .hero p{font-size:clamp(14px,1.4vw,18px)}
     .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
     .portrait{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 12px 40px rgba(0,0,0,.45)}
-
     .about{display:grid;grid-template-columns:1.1fr 1fr;gap:28px}
     .card{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01))}
-
     .services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
     .service{padding:22px;border-radius:16px;border:1px solid rgba(255,255,255,.08);transition:box-shadow .2s ease,border-color .2s ease}
     .service:hover{border-color:var(--accent);box-shadow:var(--accent-glow)}
-
     .process{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
     .step{padding:18px 16px;border:1px dashed rgba(255,255,255,.14);border-radius:14px}
-
-    .gallery{column-count:3;column-gap:12px}
-    .gallery img{width:100%;margin:0 0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;break-inside:avoid;cursor:zoom-in}
-    .gallery img:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:var(--accent-glow)}
-    .work-block{margin-top:22px}
-
-    /* Lightbox */
+    .carousel{position:relative;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:8px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));box-shadow:0 8px 30px rgba(0,0,0,.35)}
+    .carousel-viewport{position:relative;overflow:hidden;border-radius:12px}
+    .slide{min-height:56vh;display:flex;align-items:center;justify-content:center;background:#0E1524}
+    .slide img{max-height:56vh;width:auto;border-radius:12px;border:1px solid rgba(255,255,255,.08);transition:transform .2s ease, box-shadow .2s ease;cursor:zoom-in}
+    .ctrl{position:absolute;top:50%;transform:translateY(-50%);background:rgba(10,15,26,.6);border:1px solid rgba(255,255,255,.18);padding:8px 10px;border-radius:10px;cursor:pointer;user-select:none}
+    .ctrl:hover{border-color:var(--accent);box-shadow:var(--accent-glow)}
+    .prev{left:10px}
+    .next{right:10px}
+    .dots{display:flex;gap:6px;justify-content:center;margin:10px 0 4px}
+    .dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:transparent;cursor:pointer}
+    .dot.active{background:var(--accent);border-color:var(--accent);box-shadow:var(--accent-glow)}
+    @media (max-width:980px){.hero{grid-template-columns:1fr}.about{grid-template-columns:1fr}.services{grid-template-columns:1fr;gap:12px}.process{grid-template-columns:repeat(2,1fr)}.slide{min-height:42vh}.slide img{max-height:42vh}}
+    @media (max-width:560px){nav ul{display:none}}
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:80}
     .lightbox.open{display:flex}
     .lightbox img{max-width:92vw;max-height:86vh;border-radius:12px;border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 36px rgba(0,0,0,.6);transition:transform .05s linear;cursor:grab}
@@ -67,26 +66,6 @@
     .lightbox .nav-btn{position:absolute;top:50%;transform:translateY(-50%);user-select:none}
     .lightbox .prev{left:14px}
     .lightbox .next{right:14px}
-
-    form{display:grid;gap:12px;max-width:640px}
-    input,textarea{background:#0E1524;border:1px solid rgba(255,255,255,.12);color:var(--text);padding:12px 14px;border-radius:12px;outline:none}
-    input:focus,textarea:focus{border-color:var(--accent);box-shadow:var(--accent-glow)}
-    textarea{min-height:120px;resize:vertical}
-
-    .reveal{opacity:0;transform:translateY(12px);transition:opacity .6s ease, transform .6s ease}
-    .reveal.visible{opacity:1;transform:none}
-
-    @media (max-width: 980px){
-      .hero{grid-template-columns:1fr}
-      .about{grid-template-columns:1fr}
-      .services{grid-template-columns:1fr;gap:12px}
-      .process{grid-template-columns:repeat(2,1fr)}
-      .gallery{column-count:2}
-    }
-    @media (max-width: 560px){
-      nav ul{display:none}
-      .gallery{column-count:1}
-    }
   </style>
 </head>
 <body>
@@ -105,287 +84,76 @@
           <li><a href="#contact" data-i18n="menu.contact">Contact</a></li>
         </ul>
       </nav>
-      <div class="lang-switch" role="group" aria-label="language switcher">
-        <span class="pill active" data-lang="en">EN</span>
-        <span class="pill" data-lang="ru">RU</span>
-      </div>
+      <div class="lang-switch"><span class="pill active" data-lang="en">EN</span><span class="pill" data-lang="ru">RU</span></div>
     </div>
   </header>
-
   <main>
-    <section class="hero container reveal" id="hero">
+    <section class="hero container" id="hero">
       <div>
-        <div class="tag" data-i18n="tag.hero">Street Art & Retouch</div>
-        <h1 data-i18n="hero.title">Street Art & Retouch with a Bold Soul</h1>
+        <div class="tag" data-i18n="tag.hero">Street Art & Photo & Retouch</div>
+        <h1 data-i18n="hero.title">Street Art & Photo & Retouch with a Bold Soul</h1>
         <p class="muted" data-i18n="hero.sub">Irvine, California — open for projects in OC, SD & LA.</p>
         <div class="cta">
           <a class="btn accent" href="#contact" data-i18n="hero.cta1">Book a project</a>
           <a class="btn" href="#contact" data-i18n="hero.cta2">Get a quote</a>
         </div>
       </div>
-      <div class="portrait">
-        <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8390.JPG?raw=true" alt="Daniil Borchov portrait" loading="eager" />
-      </div>
+      <div class="portrait"><img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8390.JPG?raw=true" alt="Daniil Borchov portrait" /></div>
     </section>
-
-    <section id="about" class="container reveal">
-      <div class="about">
-        <div class="card">
-          <h2 data-i18n="about.title">About</h2>
-          <p data-i18n="about.text">I am Daniil, founder of Borchov. Street artist and retoucher. I create bold visuals, murals, and clean post-production.</p>
-        </div>
-        <div class="card">
-          <h2 data-i18n="about.titleRu">Обо мне</h2>
-          <p data-i18n="about.textRu">Я Даниил, основатель фирмы Борщев. Стрит-арт, фото и ретуш. Создаю смелые визуалы, муралы и чистую постобработку.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="services" class="container reveal">
-      <h2 data-i18n="services.title">Services</h2>
-      <div class="services">
-        <div class="service">
-          <h3 data-i18n="services.s1">Photography</h3>
-          <p class="muted" data-i18n="services.s1d">Portraits, events, product visuals with a street touch.</p>
-        </div>
-        <div class="service">
-          <h3 data-i18n="services.s2">Retouch</h3>
-          <p class="muted" data-i18n="services.s2d">Clean, natural retouching for editorial & commercial work.</p>
-        </div>
-        <div class="service">
-          <h3 data-i18n="services.s3">Street Art</h3>
-          <p class="muted" data-i18n="services.s3d">Murals & lettering, bold textures, urban aesthetics.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="process" class="container reveal">
-      <h2 data-i18n="process.title">Process</h2>
-      <div class="process">
-        <div class="step"><strong data-i18n="process.p1">Discovery</strong><div class="muted" data-i18n="process.p1d">Brief, goals, scope.</div></div>
-        <div class="step"><strong data-i18n="process.p2">Concept</strong><div class="muted" data-i18n="process.p2d">Mood, references, plan.</div></div>
-        <div class="step"><strong data-i18n="process.p3">Create</strong><div class="muted" data-i18n="process.p3d">Shooting / painting / retouch.</div></div>
-        <div class="step"><strong data-i18n="process.p4">Delivery</strong><div class="muted" data-i18n="process.p4d">Final files & wrap‑up.</div></div>
-      </div>
-    </section>
-
-    <section id="work" class="container reveal">
+    <section id="work" class="container">
       <h2 data-i18n="work.title">Work</h2>
-
       <div class="work-block" data-cat="street">
         <div class="tag" data-i18n="work.street">Street Art</div>
-        <div class="gallery" aria-label="Street Art gallery">
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8384.JPG?raw=true" alt="Street art 8384" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8385.JPG?raw=true" alt="Street art 8385" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8386.JPG?raw=true" alt="Street art 8386" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8387.JPG?raw=true" alt="Street art 8387" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8388.JPG?raw=true" alt="Street art 8388" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8391.JPG?raw=true" alt="Street art 8391" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8392.JPG?raw=true" alt="Street art 8392" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8393.JPG?raw=true" alt="Street art 8393" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8394.JPG?raw=true" alt="Street art 8394" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8396.JPG?raw=true" alt="Street art 8396" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8397.JPG?raw=true" alt="Street art 8397" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8399.JPG?raw=true" alt="Street art 8399" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8400.JPG?raw=true" alt="Street art 8400" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8402.JPG?raw=true" alt="Street art 8402" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8403.JPG?raw=true" alt="Street art 8403" loading="lazy" />
-        </div>
+        <div id="street-carousel" class="carousel"></div>
       </div>
-
-      <div class="work-block" data-cat="retouch">
-        <div class="tag" data-i18n="work.retouch">Retouch</div>
-        <div class="gallery" aria-label="Retouch gallery">
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8401.JPG?raw=true" alt="Retouch 8401" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8404.JPG?raw=true" alt="Retouch 8404" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8405.JPG?raw=true" alt="Retouch 8405" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8406.JPG?raw=true" alt="Retouch 8406" loading="lazy" />
-          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8407.JPG?raw=true" alt="Retouch 8407" loading="lazy" />
-        </div>
+      <div class="work-block" data-cat="retouch" style="margin-top:26px">
+        <div class="tag" data-i18n="work.retouch">Photo & Retouch / Фото и ретушь</div>
+        <div id="retouch-carousel" class="carousel"></div>
       </div>
     </section>
-
-    <section id="contact" class="container reveal">
-      <h2 data-i18n="contact.title">Contact</h2>
-      <p class="muted" data-i18n="contact.desc">Send a short brief and your preferred dates — I will reply soon.</p>
-      <form onsubmit="event.preventDefault(); alert(i18n.t('contact.thanks')); this.reset();">
-        <input name="name" placeholder="Name / Имя" aria-label="name" required />
-        <input type="email" name="email" placeholder="Email" aria-label="email" required />
-        <textarea name="message" placeholder="Message / Сообщение" aria-label="message" required></textarea>
-        <button class="btn accent" type="submit" data-i18n="contact.send">Send / Отправить</button>
-      </form>
-    </section>
-
-    <footer class="container" style="padding:42px 0;color:var(--muted);font-size:.9rem">
-      © <span id="year"></span> <span class="en">BORCHOV</span><span class="ru" style="display:none">БОРЩЕВ</span>. <span data-i18n="footer">All rights reserved.</span>
-    </footer>
   </main>
-
-  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="image viewer">
-    <button class="btn close" aria-label="close" title="Close">✕</button>
-    <button class="btn nav-btn prev" title="Prev" aria-label="previous">◀</button>
-    <button class="btn nav-btn next" title="Next" aria-label="next">▶</button>
-    <img alt="preview" />
+  <div class="lightbox" id="lightbox">
+    <button class="btn close">✕</button><button class="btn nav-btn prev">◀</button><button class="btn nav-btn next">▶</button><img alt="preview" />
   </div>
-
   <script>
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click', e=>{
-        const id=a.getAttribute('href');
-        const el=document.querySelector(id);
-        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth',block:'start'}); }
-      });
-    });
-
-    // Year
-    document.getElementById('year').textContent=new Date().getFullYear();
-
-    // Reveal
-    const io=new IntersectionObserver(entries=>{
-      entries.forEach(ent=>{
-        if(ent.isIntersecting){ ent.target.classList.add('visible'); io.unobserve(ent.target);} 
-      });
-    },{threshold:.14});
-    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-    // Lightbox + navigation + swipe
-    const lb=document.getElementById('lightbox');
-    const lbImg=lb.querySelector('img');
-    const closeBtn=lb.querySelector('.close');
-    const prevBtn=lb.querySelector('.prev');
-    const nextBtn=lb.querySelector('.next');
-    const allImgs=[...document.querySelectorAll('.gallery img')];
-    let idx=-1;
-
-    function resetTransform(){
-      scale=1; panX=0; panY=0;
-      lbImg.style.transform='';
-      lbImg.style.cursor='grab';
+    const streetURLs=[
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8384.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8385.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8386.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8387.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8388.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8391.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8392.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8393.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8394.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8396.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8397.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8401.JPG?raw=true"
+    ];
+    const retouchURLs=[
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8399.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8400.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8402.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8403.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8404.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8405.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8406.JPG?raw=true",
+      "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8407.JPG?raw=true"
+    ];
+    function buildCarousel(el,urls){
+      el.innerHTML='';const viewport=document.createElement('div');viewport.className='carousel-viewport';const slide=document.createElement('div');slide.className='slide';const img=new Image();slide.appendChild(img);viewport.appendChild(slide);el.appendChild(viewport);const prev=document.createElement('button');prev.className='ctrl prev';prev.textContent='◀';const next=document.createElement('button');next.className='ctrl next';next.textContent='▶';el.appendChild(prev);el.appendChild(next);const dots=document.createElement('div');dots.className='dots';el.appendChild(dots);let i=0;function render(){img.src=urls[i];[...dots.children].forEach((d,k)=>d.classList.toggle('active',k===i));}
+      urls.forEach((_,k)=>{const d=document.createElement('button');d.className='dot';dots.appendChild(d);d.addEventListener('click',()=>{i=k;render();});});
+      prev.addEventListener('click',()=>{i=(i-1+urls.length)%urls.length;render();});next.addEventListener('click',()=>{i=(i+1)%urls.length;render();});
+      viewport.addEventListener('touchstart',e=>{startX=e.changedTouches[0].clientX;},{passive:true});viewport.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>40){dx<0?next.click():prev.click();}},{passive:true});img.addEventListener('click',()=>openLightbox(urls,i));render();
     }
-
-    function openAt(i){
-      idx=i;
-      lbImg.src=allImgs[idx].src;
-      lb.classList.add('open');
-      resetTransform();
-    }
-    allImgs.forEach((img,i)=>img.addEventListener('click',()=>openAt(i)));
-
-    function step(d){
-      if(idx<0) return;
-      idx=(idx+d+allImgs.length)%allImgs.length;
-      lbImg.src=allImgs[idx].src;
-      resetTransform();
-    }
-
-    prevBtn.addEventListener('click',()=>step(-1));
-    nextBtn.addEventListener('click',()=>step(1));
-
-    document.addEventListener('keydown',e=>{
-      if(!lb.classList.contains('open')) return;
-      if(e.key==='Escape') closeLB();
-      if(e.key==='ArrowRight') step(1);
-      if(e.key==='ArrowLeft')  step(-1);
-    });
-
-    let touchX=0;
-    lb.addEventListener('touchstart',e=>{ touchX=e.changedTouches[0].clientX; },{passive:true});
-    lb.addEventListener('touchend',e=>{
-      const dx=e.changedTouches[0].clientX - touchX;
-      if(Math.abs(dx)>40) step(dx<0?1:-1);
-    },{passive:true});
-
-    function closeLB(){ lb.classList.remove('open'); lbImg.src=''; }
-    closeBtn.addEventListener('click',closeLB);
-    lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
-
-    // Zoom & pan
-    let scale=1, panX=0, panY=0, isDrag=false, lastX=0, lastY=0;
-    function applyTransform(){ lbImg.style.transform=`translate(${panX}px,${panY}px) scale(${scale})`; }
-
-    lbImg.addEventListener('wheel',e=>{
-      e.preventDefault();
-      const delta = -Math.sign(e.deltaY)*0.15;       // wheel up -> zoom in
-      const next = Math.min(4, Math.max(1, scale+delta));
-      if(next!==scale){
-        scale = next;
-        applyTransform();
-        lbImg.style.cursor = scale>1 ? 'grab' : 'zoom-in';
-      }
-    },{passive:false});
-
-    lbImg.addEventListener('mousedown',e=>{
-      if(scale<=1) return;
-      isDrag=true; lastX=e.clientX; lastY=e.clientY;
-      lbImg.style.cursor='grabbing';
-    });
-    window.addEventListener('mousemove',e=>{
-      if(!isDrag) return;
-      panX += e.clientX - lastX;
-      panY += e.clientY - lastY;
-      lastX = e.clientX; lastY = e.clientY;
-      applyTransform();
-    });
-    window.addEventListener('mouseup',()=>{
-      if(!isDrag) return;
-      isDrag=false; lbImg.style.cursor='grab';
-    });
-
-    // Simple i18n
-    const i18n=(function(){
-      const dict={
-        en:{
-          'menu.work':'Work','menu.services':'Services','menu.process':'Process','menu.about':'About','menu.contact':'Contact',
-          'tag.hero':'Street Art & Retouch',
-          'hero.title':'Street Art & Retouch with a Bold Soul',
-          'hero.sub':'Irvine, California — open for projects in OC, SD & LA.',
-          'hero.cta1':'Book a project','hero.cta2':'Get a quote',
-          'about.title':'About','about.text':'I am Daniil, founder of Borchov. Street artist and retoucher. I create bold visuals, murals, and clean post-production.',
-          'about.titleRu':'About (RU)','about.textRu':'I am Daniil, founder of Borchov. Street artist, photographer and retoucher.',
-          'services.title':'Services','services.s1':'Photography','services.s1d':'Portraits, events, product visuals with a street touch.','services.s2':'Retouch','services.s2d':'Clean, natural retouching for editorial & commercial work.','services.s3':'Street Art','services.s3d':'Murals & lettering, bold textures, urban aesthetics.',
-          'process.title':'Process','process.p1':'Discovery','process.p1d':'Brief, goals, scope.','process.p2':'Concept','process.p2d':'Mood, references, plan.','process.p3':'Create','process.p3d':'Shooting / painting / retouch.','process.p4':'Delivery','process.p4d':'Final files & wrap‑up.',
-          'work.title':'Work','work.street':'Street Art','work.retouch':'Retouch',
-          'contact.title':'Contact','contact.desc':'Send a short brief and your preferred dates — I will reply soon.','contact.send':'Send / Отправить',
-          'contact.thanks':'Thank you! Daniil will reply soon. / Спасибо! Даниил скоро ответит.',
-          'footer':'All rights reserved.'
-        },
-        ru:{
-          'menu.work':'Работы','menu.services':'Услуги','menu.process':'Процесс','menu.about':'Обо мне','menu.contact':'Контакты',
-          'tag.hero':'Стрит-арт и ретушь',
-          'hero.title':'Стрит-арт и ретушь со смелой душой',
-          'hero.sub':'Ирвайн, Калифорния — открыт к проектам в Орандж, Сан-Диего и Лос-Анджелесе.',
-          'hero.cta1':'Заказать проект','hero.cta2':'Получить смету',
-          'about.title':'Обо мне','about.text':'Я Даниил, основатель фирмы Борщев. Стрит-арт, фото и ретуш. Создаю смелые визуалы, муралы и чистую постобработку.',
-          'about.titleRu':'Обо мне (EN)','about.textRu':'Я Даниил, основатель фирмы Борщев. Стрит-арт, фотограф и ретушёр.',
-          'services.title':'Услуги','services.s1':'Фотосъёмка','services.s1d':'Портреты, события, предметка с уличным характером.','services.s2':'Ретушь','services.s2d':'Чистая, естественная ретушь для коммерции и редакции.','services.s3':'Стрит-арт','services.s3d':'Муралы и леттеринг, фактуры и урбан-эстетика.',
-          'process.title':'Процесс','process.p1':'Диагностика','process.p1d':'Бриф, цели, рамки.','process.p2':'Концепция','process.p2d':'Настроение, референсы, план.','process.p3':'Создание','process.p3d':'Съёмка / роспись / ретушь.','process.p4':'Передача','process.p4d':'Финальные файлы и завершение.',
-          'work.title':'Работы','work.street':'Стрит-арт','work.retouch':'Ретушь',
-          'contact.title':'Контакты','contact.desc':'Опишите задачу и желаемые даты — я отвечу в ближайшее время.','contact.send':'Отправить / Send',
-          'contact.thanks':'Спасибо! Даниил скоро ответит. / Thank you! Daniil will reply soon.',
-          'footer':'Все права защищены.'
-        }
-      };
-      let current='en';
-      function t(key){ return (dict[current]&&dict[current][key])||key; }
-      function apply(){
-        document.querySelectorAll('[data-i18n]').forEach(el=>{
-          const key=el.getAttribute('data-i18n');
-          el.textContent=t(key);
-        });
-        document.querySelector('.logo .en').style.display=current==='en'?'inline':'none';
-        document.querySelector('.logo .ru').style.display=current==='ru'?'inline':'none';
-        document.querySelector('footer .en').style.display=current==='en'?'inline':'none';
-        document.querySelector('footer .ru').style.display=current==='ru'?'inline':'none';
-        document.querySelectorAll('.lang-switch .pill').forEach(p=>p.classList.toggle('active',p.dataset.lang===current));
-        document.documentElement.lang=current;
-      }
-      function set(lang){ current=lang; localStorage.setItem('lang',lang); apply(); }
-      function init(){ const saved=localStorage.getItem('lang'); if(saved&&(saved==='en'||saved==='ru')) current=saved; apply(); }
-      return {init,set,t};
-    })();
-    i18n.init();
-    document.querySelectorAll('.lang-switch .pill').forEach(p=>p.addEventListener('click',()=>i18n.set(p.dataset.lang)));
+    buildCarousel(document.getElementById('street-carousel'),streetURLs);buildCarousel(document.getElementById('retouch-carousel'),retouchURLs);
+    const lb=document.getElementById('lightbox'),lbImg=lb.querySelector('img');let currentSet=[],currentIndex=0;function openLightbox(set,index){currentSet=set.slice();currentIndex=index;lbImg.src=currentSet[currentIndex];lb.classList.add('open');resetTransform();}
+    function step(d){currentIndex=(currentIndex+d+currentSet.length)%currentSet.length;lbImg.src=currentSet[currentIndex];resetTransform();}
+    lb.querySelector('.prev').addEventListener('click',()=>step(-1));lb.querySelector('.next').addEventListener('click',()=>step(1));document.addEventListener('keydown',e=>{if(!lb.classList.contains('open'))return;if(e.key==='Escape')closeLB();if(e.key==='ArrowRight')step(1);if(e.key==='ArrowLeft')step(-1);});function closeLB(){lb.classList.remove('open');}
+    lb.querySelector('.close').addEventListener('click',closeLB);lb.addEventListener('click',e=>{if(e.target===lb)closeLB();});
+    let scale=1,panX=0,panY=0,isDrag=false,lastX=0,lastY=0;function resetTransform(){scale=1;panX=panY=0;lbImg.style.transform='';lbImg.style.cursor='grab';}function applyTransform(){lbImg.style.transform=`translate(${panX}px,${panY}px) scale(${scale})`;}
+    lbImg.addEventListener('wheel',e=>{e.preventDefault();const delta=-Math.sign(e.deltaY)*0.15;const next=Math.min(4,Math.max(1,scale+delta));if(next!==scale){scale=next;applyTransform();lbImg.style.cursor=scale>1?'grab':'zoom-in';}},{passive:false});
+    lbImg.addEventListener('mousedown',e=>{if(scale<=1)return;isDrag=true;lastX=e.clientX;lastY=e.clientY;lbImg.style.cursor='grabbing';});window.addEventListener('mousemove',e=>{if(!isDrag)return;panX+=e.clientX-lastX;panY+=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;applyTransform();});window.addEventListener('mouseup',()=>{if(!isDrag)return;isDrag=false;lbImg.style.cursor='grab';});
   </script>
 </body>
 </html>
