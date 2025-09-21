@@ -133,16 +133,6 @@
     .reveal.show { opacity: 1; transform: translateY(0) scale(1); }
     nav a:hover { text-shadow: 0 0 10px rgba(138,154,91,.45); }
 
-    /* === Custom Neon Cursor (desktop only) === */
-    .cursor-dot, .cursor-ring {
-      position: fixed; top:0; left:0; pointer-events:none; z-index:100; mix-blend-mode:screen;
-      transform: translate(-50%,-50%);
-    }
-    .cursor-dot{ width:8px; height:8px; border-radius:50%; background: rgba(138,154,91,.85); box-shadow: 0 0 12px rgba(138,154,91,.8); }
-    .cursor-ring{ width:36px; height:36px; border-radius:50%; border:2px solid rgba(138,154,91,.65); box-shadow: 0 0 24px rgba(138,154,91,.35); transition: width .15s ease, height .15s ease, border-color .15s ease; }
-    .cursor-hidden{ opacity:0; transition: opacity .2s ease; }
-    .cursor-hover{ border-color: rgba(138,154,91,1); box-shadow: 0 0 32px rgba(138,154,91,.55); }
-
     /* Magnetic hover targets */
     .magnet{ position:relative; }
     .magnet:hover{ filter: drop-shadow(0 0 14px rgba(138,154,91,.35)); }
@@ -150,6 +140,11 @@
     /* Click ripple */
     .ripple{ position:absolute; border-radius:50%; background: rgba(138,154,91,.35); transform: scale(0); animation: ripple .6s ease-out forwards; pointer-events:none; mix-blend-mode:screen; }
     @keyframes ripple{ to { transform: scale(6); opacity:0; } }
+
+    /* Spray canvas */
+    #sprayCanvas{
+      position:fixed; inset:0; z-index:90; pointer-events:none; mix-blend-mode:screen;
+    }
   </style>
 </head>
 <body>
@@ -276,9 +271,8 @@
     <img alt="preview" />
   </div>
 
-  <!-- Custom Cursor (desktop) -->
-  <div class="cursor-dot" id="cDot"></div>
-  <div class="cursor-ring" id="cRing"></div>
+  <!-- Spray Canvas -->
+  <canvas id="sprayCanvas"></canvas>
 
   <script>
     // Smooth scroll
@@ -485,36 +479,18 @@
       document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     })();
 
-    // === Neon cursor (desktop only, hide on touch) ===
+    // Magnetic hover (kept, independent from cursor visuals)
     (function(){
-      const touch = 'ontouchstart' in window || navigator.maxTouchPoints>0;
-      const dot = document.getElementById('cDot');
-      const ring = document.getElementById('cRing');
-      if(touch){ dot.style.display='none'; ring.style.display='none'; return; }
-
-      let x=window.innerWidth/2, y=window.innerHeight/2, tx=x, ty=y;
-      const lerp=(a,b,t)=>a+(b-a)*t;
-      function raf(){ x=lerp(x,tx,.18); y=lerp(y,ty,.18); ring.style.transform=`translate(${x}px,${y}px)`; dot.style.transform=`translate(${tx}px,${ty}px)`; requestAnimationFrame(raf); }
-      requestAnimationFrame(raf);
-
-      window.addEventListener('mousemove',e=>{ tx=e.clientX; ty=e.clientY; dot.classList.remove('cursor-hidden'); ring.classList.remove('cursor-hidden'); });
-      window.addEventListener('mouseleave',()=>{ dot.classList.add('cursor-hidden'); ring.classList.add('cursor-hidden'); });
-
-      // Magnetic hover
       document.querySelectorAll('.magnet').forEach(el=>{
         const strength = 14;
         el.addEventListener('mousemove',e=>{
           const r=el.getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height/2;
           const dx=(e.clientX-cx)/r.width, dy=(e.clientY-cy)/r.height;
           el.style.transform=`translate(${dx*strength}px, ${dy*strength}px)`;
-          ring.classList.add('cursor-hover'); ring.style.width='48px'; ring.style.height='48px';
         });
-        el.addEventListener('mouseleave',()=>{
-          el.style.transform=''; ring.classList.remove('cursor-hover'); ring.style.width='36px'; ring.style.height='36px';
-        });
+        el.addEventListener('mouseleave',()=>{ el.style.transform=''; });
       });
-
-      // Click ripple on interactive
+      // Click ripple
       function addRipple(e){
         const target = e.currentTarget;
         const r=target.getBoundingClientRect();
@@ -528,6 +504,94 @@
       document.querySelectorAll('.btn, .slide').forEach(el=>{
         el.addEventListener('click', addRipple);
       });
+    })();
+
+    // === Neon Spray Cursor (desktop only) ===
+    (function(){
+      const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints>0;
+      if(isTouch) return; // keep clean on mobile
+
+      const canvas = document.getElementById('sprayCanvas');
+      const ctx = canvas.getContext('2d');
+      let w=canvas.width=window.innerWidth, h=canvas.height=window.innerHeight;
+      window.addEventListener('resize',()=>{ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; });
+
+      // Hide native cursor for desktop
+      document.body.style.cursor='none';
+
+      const particles=[];
+      function addParticle(x,y,opts={}){
+        const p={
+          x,y,
+          r: opts.r ?? (8 + Math.random()*8),            // radius
+          life: opts.life ?? 260,                         // ms
+          born: performance.now(),
+          vx: opts.vx ?? (Math.random()-0.5)*0.08,
+          vy: opts.vy ?? (Math.random()-0.5)*0.08,
+          alpha: opts.alpha ?? 0.25 + Math.random()*0.15  // starting transparency
+        };
+        particles.push(p);
+      }
+      function splatter(x,y){
+        const count = 10 + Math.floor(Math.random()*10);
+        for(let i=0;i<count;i++){
+          const ang = Math.random()*Math.PI*2;
+          const spd = 0.3 + Math.random()*0.8;
+          addParticle(x,y,{
+            r: 4 + Math.random()*10,
+            vx: Math.cos(ang)*spd,
+            vy: Math.sin(ang)*spd,
+            life: 300 + Math.random()*250,
+            alpha: 0.22 + Math.random()*0.2
+          });
+        }
+      }
+
+      let mx=w/2, my=h/2, pmx=mx, pmy=my, lastT=performance.now();
+      window.addEventListener('mousemove',(e)=>{
+        mx=e.clientX; my=e.clientY;
+        // Seed a few particles along the path for a soft trail
+        addParticle(mx,my,{r: 10+Math.random()*10, alpha:0.18+Math.random()*0.12, life:220});
+        addParticle(mx,my,{r: 18+Math.random()*14, alpha:0.08+Math.random()*0.06, life:260});
+      });
+      window.addEventListener('mousedown',()=>{ splatter(mx,my); });
+
+      function drawParticle(p, now){
+        const age = now - p.born;
+        const t = Math.min(1, age / p.life);
+        const fade = 1 - t;
+        p.x += p.vx; p.y += p.vy;
+
+        // Radial gradient for spray dot
+        const g = ctx.createRadialGradient(p.x,p.y,0, p.x,p.y,p.r);
+        const c1 = `rgba(138,154,91,${0.22 * p.alpha * fade})`; // core
+        const c2 = `rgba(138,154,91,${0.10 * p.alpha * fade})`; // mid
+        const c3 = `rgba(138,154,91,0)`;                        // edge
+        g.addColorStop(0, c1);
+        g.addColorStop(0.45, c2);
+        g.addColorStop(1, c3);
+
+        ctx.beginPath();
+        ctx.fillStyle = g;
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      function tick(){
+        const now = performance.now();
+        ctx.clearRect(0,0,w,h);
+        // slight base blur by layering
+        ctx.globalCompositeOperation = 'lighter';
+        for(let i=0;i<particles.length;i++){
+          drawParticle(particles[i], now);
+        }
+        // remove dead
+        for(let i=particles.length-1;i>=0;i--){
+          if(now - particles[i].born > particles[i].life) particles.splice(i,1);
+        }
+        requestAnimationFrame(tick);
+      }
+      tick();
     })();
   </script>
 </body>
