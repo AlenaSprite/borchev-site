@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BORCHOV — Street Art & Retouch</title>
+  <meta name="description" content="Borchev (Борщев) — street art, photography & retouch portfolio. Irvine, CA." />
+  <style>
+    :root{
+      --bg:#0A0F1A;           /* тёмный фон */
+      --text:#E6EAF2;         /* светлый текст */
+      --muted:#9BA3AE;        /* вторичный */
+      --accent:#8A9A5B;       /* хаки */
+      --accent-glow:0 0 24px rgba(138,154,91,.35);
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1200px,92vw);margin-inline:auto}
+
+    /* Header */
+    header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(10,15,26,.95),rgba(10,15,26,.75) 80%,rgba(10,15,26,0));backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .logo{font-weight:800;letter-spacing:.18em}
+    .logo .en{display:inline}
+    .logo .ru{display:none}
+    nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0}
+    .lang-switch{display:flex;gap:8px;align-items:center}
+    .pill{border:1px solid rgba(255,255,255,.14);padding:6px 10px;border-radius:999px;cursor:pointer;user-select:none}
+    .pill.active{border-color:var(--accent);box-shadow:var(--accent-glow)}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:1px solid rgba(255,255,255,.14);border-radius:12px;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease}
+    .btn:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:var(--accent-glow)}
+    .btn.accent{background:linear-gradient(180deg,rgba(138,154,91,.16),rgba(138,154,91,.06));border-color:rgba(138,154,91,.65)}
+
+    /* Sections */
+    section{padding:72px 0}
+    h1,h2,h3{margin:0 0 12px}
+    .muted{color:var(--muted)}
+    .tag{color:var(--accent);text-transform:uppercase;letter-spacing:.18em;font-size:.76rem}
+
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:center;min-height:72vh}
+    .hero h1{font-size:clamp(28px,4.4vw,52px);line-height:1.05}
+    .hero p{font-size:clamp(14px,1.4vw,18px)}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .portrait{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 12px 40px rgba(0,0,0,.45)}
+
+    /* About */
+    .about{display:grid;grid-template-columns:1.1fr 1fr;gap:28px}
+    .card{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01))}
+
+    /* Services */
+    .services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .service{padding:22px;border-radius:16px;border:1px solid rgba(255,255,255,.08);transition:box-shadow .2s ease,border-color .2s ease;cursor:default}
+    .service:hover{border-color:var(--accent);box-shadow:var(--accent-glow)}
+
+    /* Process */
+    .process{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .step{padding:18px 16px;border:1px dashed rgba(255,255,255,.14);border-radius:14px}
+
+    /* Work — Masonry */
+    .gallery{column-count:3;column-gap:12px}
+    .gallery img{width:100%;margin:0 0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;break-inside:avoid}
+    .gallery img:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:var(--accent-glow)}
+    .work-block{margin-top:22px}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:80}
+    .lightbox.open{display:flex}
+    .lightbox img{max-width:92vw;max-height:86vh;border-radius:12px;border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 36px rgba(0,0,0,.6)}
+    .lightbox .close{position:absolute;top:18px;right:18px}
+
+    /* Contact */
+    form{display:grid;gap:12px;max-width:640px}
+    input,textarea{background:#0E1524;border:1px solid rgba(255,255,255,.12);color:var(--text);padding:12px 14px;border-radius:12px;outline:none}
+    input:focus,textarea:focus{border-color:var(--accent);box-shadow:var(--accent-glow)}
+    textarea{min-height:120px;resize:vertical}
+
+    /* Fade-in on scroll */
+    .reveal{opacity:0;transform:translateY(12px);transition:opacity .6s ease, transform .6s ease}
+    .reveal.visible{opacity:1;transform:none}
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero{grid-template-columns:1fr}
+      .about{grid-template-columns:1fr}
+      .services{grid-template-columns:1fr;gap:12px}
+      .process{grid-template-columns:repeat(2,1fr)}
+      .gallery{column-count:2}
+    }
+    @media (max-width: 560px){
+      nav ul{display:none}
+      .gallery{column-count:1}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="logo" aria-label="BORCHOV / БОРЩЕВ">
+        <span class="en">BORCHOV</span>
+        <span class="ru">БОРЩЕВ</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#work" data-i18n="menu.work">Work</a></li>
+          <li><a href="#services" data-i18n="menu.services">Services</a></li>
+          <li><a href="#process" data-i18n="menu.process">Process</a></li>
+          <li><a href="#about" data-i18n="menu.about">About</a></li>
+          <li><a href="#contact" data-i18n="menu.contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="lang-switch" role="group" aria-label="language switcher">
+        <span class="pill active" data-lang="en">EN</span>
+        <span class="pill" data-lang="ru">RU</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero container reveal" id="hero">
+      <div>
+        <div class="tag" data-i18n="tag.hero">Street Art & Retouch</div>
+        <h1 data-i18n="hero.title">Street Art & Retouch with a Bold Soul</h1>
+        <p class="muted" data-i18n="hero.sub">Irvine, California — open for projects in OC, SD & LA.</p>
+        <div class="cta">
+          <a class="btn accent" href="#contact" data-i18n="hero.cta1">Book a project</a>
+          <a class="btn" href="#contact" data-i18n="hero.cta2">Get a quote</a>
+        </div>
+      </div>
+      <div class="portrait">
+        <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/portrait/IMG_8390.JPG?raw=true" alt="Daniil Borchov portrait" loading="eager" />
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="container reveal">
+      <div class="about">
+        <div class="card">
+          <h2 data-i18n="about.title">About</h2>
+          <p data-i18n="about.text">I am Daniil, founder of Borchov. Street artist and retoucher. I create bold visuals, murals, and clean post-production.</p>
+        </div>
+        <div class="card">
+          <h2 data-i18n="about.titleRu">Обо мне</h2>
+          <p data-i18n="about.textRu">Я Даниил, основатель фирмы Борщев. Стрит-арт, фото и ретуш. Создаю смелые визуалы, муралы и чистую постобработку.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="container reveal">
+      <h2 data-i18n="services.title">Services</h2>
+      <div class="services">
+        <div class="service">
+          <h3 data-i18n="services.s1">Photography</h3>
+          <p class="muted" data-i18n="services.s1d">Portraits, events, product visuals with a street touch.</p>
+        </div>
+        <div class="service">
+          <h3 data-i18n="services.s2">Retouch</h3>
+          <p class="muted" data-i18n="services.s2d">Clean, natural retouching for editorial & commercial work.</p>
+        </div>
+        <div class="service">
+          <h3 data-i18n="services.s3">Street Art</h3>
+          <p class="muted" data-i18n="services.s3d">Murals & lettering, bold textures, urban aesthetics.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section id="process" class="container reveal">
+      <h2 data-i18n="process.title">Process</h2>
+      <div class="process">
+        <div class="step"><strong data-i18n="process.p1">Discovery</strong><div class="muted" data-i18n="process.p1d">Brief, goals, scope.</div></div>
+        <div class="step"><strong data-i18n="process.p2">Concept</strong><div class="muted" data-i18n="process.p2d">Mood, references, plan.</div></div>
+        <div class="step"><strong data-i18n="process.p3">Create</strong><div class="muted" data-i18n="process.p3d">Shooting / painting / retouch.</div></div>
+        <div class="step"><strong data-i18n="process.p4">Delivery</strong><div class="muted" data-i18n="process.p4d">Final files & wrap‑up.</div></div>
+      </div>
+    </section>
+
+    <!-- Work -->
+    <section id="work" class="container reveal">
+      <h2 data-i18n="work.title">Work</h2>
+
+      <div class="work-block">
+        <div class="tag" data-i18n="work.street">Street Art</div>
+        <div class="gallery" aria-label="Street Art gallery">
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8384.JPG?raw=true" alt="Street art 8384" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8385.JPG?raw=true" alt="Street art 8385" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8386.JPG?raw=true" alt="Street art 8386" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8387.JPG?raw=true" alt="Street art 8387" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8388.JPG?raw=true" alt="Street art 8388" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8391.JPG?raw=true" alt="Street art 8391" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8392.JPG?raw=true" alt="Street art 8392" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8393.JPG?raw=true" alt="Street art 8393" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8394.JPG?raw=true" alt="Street art 8394" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8396.JPG?raw=true" alt="Street art 8396" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8397.JPG?raw=true" alt="Street art 8397" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8399.JPG?raw=true" alt="Street art 8399" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8400.JPG?raw=true" alt="Street art 8400" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8402.JPG?raw=true" alt="Street art 8402" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/streetart/IMG_8403.JPG?raw=true" alt="Street art 8403" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="work-block">
+        <div class="tag" data-i18n="work.retouch">Retouch</div>
+        <div class="gallery" aria-label="Retouch gallery">
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/retouch/IMG_8401.JPG?raw=true" alt="Retouch 8401" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/retouch/IMG_8404.JPG?raw=true" alt="Retouch 8404" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/retouch/IMG_8405.JPG?raw=true" alt="Retouch 8405" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/retouch/IMG_8406.JPG?raw=true" alt="Retouch 8406" loading="lazy" />
+          <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/photos/retouch/IMG_8407.JPG?raw=true" alt="Retouch 8407" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="container reveal">
+      <h2 data-i18n="contact.title">Contact</h2>
+      <p class="muted" data-i18n="contact.desc">Send a short brief and your preferred dates — I will reply soon.</p>
+      <form onsubmit="event.preventDefault(); alert(i18n.t('contact.thanks')); this.reset();">
+        <input name="name" placeholder="Name / Имя" aria-label="name" required />
+        <input type="email" name="email" placeholder="Email" aria-label="email" required />
+        <textarea name="message" placeholder="Message / Сообщение" aria-label="message" required></textarea>
+        <button class="btn accent" type="submit" data-i18n="contact.send">Send / Отправить</button>
+      </form>
+    </section>
+
+    <footer class="container" style="padding:42px 0;color:var(--muted);font-size:.9rem">
+      © <span id="year"></span> <span class="en">BORCHOV</span><span class="ru" style="display:none">БОРЩЕВ</span>. <span data-i18n="footer">All rights reserved.</span>
+    </footer>
+  </main>
+
+  <!-- Lightbox overlay -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="image viewer">
+    <button class="btn close" aria-label="close" title="Close">✕</button>
+    <img alt="preview" />
+  </div>
+
+  <script>
+    // Smooth scroll for in-page links
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', e=>{
+        const id=a.getAttribute('href');
+        const el=document.querySelector(id);
+        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth',block:'start'}); }
+      });
+    });
+
+    // Year
+    document.getElementById('year').textContent=new Date().getFullYear();
+
+    // Intersection Observer for reveal animation
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(ent=>{
+        if(ent.isIntersecting){ ent.target.classList.add('visible'); io.unobserve(ent.target);} 
+      });
+    },{threshold:.14});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    // Lightbox logic (works for all images inside .gallery)
+    const lb=document.getElementById('lightbox');
+    const lbImg=lb.querySelector('img');
+    const closeBtn=lb.querySelector('.close');
+    document.querySelectorAll('.gallery img').forEach(img=>{
+      img.addEventListener('click',()=>{ lbImg.src=img.src; lb.classList.add('open'); });
+    });
+    function closeLB(){ lb.classList.remove('open'); lbImg.src=''; }
+    closeBtn.addEventListener('click',closeLB);
+    lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeLB(); });
+
+    // Simple i18n
+    const i18n=(function(){
+      const dict={
+        en:{
+          'menu.work':'Work','menu.services':'Services','menu.process':'Process','menu.about':'About','menu.contact':'Contact',
+          'tag.hero':'Street Art & Retouch',
+          'hero.title':'Street Art & Retouch with a Bold Soul',
+          'hero.sub':'Irvine, California — open for projects in OC, SD & LA.',
+          'hero.cta1':'Book a project','hero.cta2':'Get a quote',
+          'about.title':'About','about.text':'I am Daniil, founder of Borchov. Street artist and retoucher. I create bold visuals, murals, and clean post-production.',
+          'about.titleRu':'About (RU)','about.textRu':'I am Daniil, founder of Borchov. Street artist, photographer and retoucher.',
+          'services.title':'Services','services.s1':'Photography','services.s1d':'Portraits, events, product visuals with a street touch.','services.s2':'Retouch','services.s2d':'Clean, natural retouching for editorial & commercial work.','services.s3':'Street Art','services.s3d':'Murals & lettering, bold textures, urban aesthetics.',
+          'process.title':'Process','process.p1':'Discovery','process.p1d':'Brief, goals, scope.','process.p2':'Concept','process.p2d':'Mood, references, plan.','process.p3':'Create','process.p3d':'Shooting / painting / retouch.','process.p4':'Delivery','process.p4d':'Final files & wrap‑up.',
+          'work.title':'Work','work.street':'Street Art','work.retouch':'Retouch',
+          'contact.title':'Contact','contact.desc':'Send a short brief and your preferred dates — I will reply soon.','contact.send':'Send / Отправить',
+          'contact.thanks':'Thank you! Daniil will reply soon. / Спасибо! Даниил скоро ответит.',
+          'footer':'All rights reserved.'
+        },
+        ru:{
+          'menu.work':'Работы','menu.services':'Услуги','menu.process':'Процесс','menu.about':'Обо мне','menu.contact':'Контакты',
+          'tag.hero':'Стрит-арт и ретушь',
+          'hero.title':'Стрит-арт и ретушь со смелой душой',
+          'hero.sub':'Ирвайн, Калифорния — открыт к проектам в Орандж, Сан-Диего и Лос-Анджелесе.',
+          'hero.cta1':'Заказать проект','hero.cta2':'Получить смету',
+          'about.title':'Обо мне','about.text':'Я Даниил, основатель фирмы Борщев. Стрит-арт, фото и ретуш. Создаю смелые визуалы, муралы и чистую постобработку.',
+          'about.titleRu':'Обо мне (EN)','about.textRu':'Я Даниил, основатель фирмы Борщев. Стрит-арт, фотограф и ретушёр.',
+          'services.title':'Услуги','services.s1':'Фотосъёмка','services.s1d':'Портреты, события, предметка с уличным характером.','services.s2':'Ретушь','services.s2d':'Чистая, естественная ретушь для коммерции и редакции.','services.s3':'Стрит-арт','services.s3d':'Муралы и леттеринг, фактуры и урбан-эстетика.',
+          'process.title':'Процесс','process.p1':'Диагностика','process.p1d':'Бриф, цели, рамки.','process.p2':'Концепция','process.p2d':'Настроение, референсы, план.','process.p3':'Создание','process.p3d':'Съёмка / роспись / ретушь.','process.p4':'Передача','process.p4d':'Финальные файлы и завершение.',
+          'work.title':'Работы','work.street':'Стрит-арт','work.retouch':'Ретушь',
+          'contact.title':'Контакты','contact.desc':'Опишите задачу и желаемые даты — я отвечу в ближайшее время.','contact.send':'Отправить / Send',
+          'contact.thanks':'Спасибо! Даниил скоро ответит. / Thank you! Daniil will reply soon.',
+          'footer':'Все права защищены.'
+        }
+      };
+      let current='en';
+      function t(key){ return (dict[current]&&dict[current][key])||key; }
+      function apply(){
+        document.querySelectorAll('[data-i18n]').forEach(el=>{
+          const key=el.getAttribute('data-i18n');
+          el.textContent=t(key);
+        });
+        // logo wordmark swap
+        document.querySelector('.logo .en').style.display=current==='en'?'inline':'none';
+        document.querySelector('.logo .ru').style.display=current==='ru'?'inline':'none';
+        // footer language swap words (BORCHOV/БОРЩЕВ)
+        document.querySelector('footer .en').style.display=current==='en'?'inline':'none';
+        document.querySelector('footer .ru').style.display=current==='ru'?'inline':'none';
+        // pills state
+        document.querySelectorAll('.lang-switch .pill').forEach(p=>p.classList.toggle('active',p.dataset.lang===current));
+        document.documentElement.lang=current;
+      }
+      function set(lang){ current=lang; localStorage.setItem('lang',lang); apply(); }
+      function init(){ const saved=localStorage.getItem('lang'); if(saved&&(saved==='en'||saved==='ru')) current=saved; apply(); }
+      return {init,set,t};
+    })();
+    i18n.init();
+
+    document.querySelectorAll('.lang-switch .pill').forEach(p=>p.addEventListener('click',()=>i18n.set(p.dataset.lang)));
+  </script>
+</body>
+</html>
