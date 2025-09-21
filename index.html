@@ -55,14 +55,18 @@
     .step{padding:18px 16px;border:1px dashed rgba(255,255,255,.14);border-radius:14px}
 
     .gallery{column-count:3;column-gap:12px}
-    .gallery img{width:100%;margin:0 0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;break-inside:avoid}
+    .gallery img{width:100%;margin:0 0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;break-inside:avoid;cursor:zoom-in}
     .gallery img:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:var(--accent-glow)}
     .work-block{margin-top:22px}
 
-    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:80}
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:80}
     .lightbox.open{display:flex}
-    .lightbox img{max-width:92vw;max-height:86vh;border-radius:12px;border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 36px rgba(0,0,0,.6)}
+    .lightbox img{max-width:92vw;max-height:86vh;border-radius:12px;border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 36px rgba(0,0,0,.6);transition:transform .05s linear;cursor:grab}
     .lightbox .close{position:absolute;top:18px;right:18px}
+    .lightbox .nav-btn{position:absolute;top:50%;transform:translateY(-50%);user-select:none}
+    .lightbox .prev{left:14px}
+    .lightbox .next{right:14px}
 
     form{display:grid;gap:12px;max-width:640px}
     input,textarea{background:#0E1524;border:1px solid rgba(255,255,255,.12);color:var(--text);padding:12px 14px;border-radius:12px;outline:none}
@@ -168,7 +172,7 @@
     <section id="work" class="container reveal">
       <h2 data-i18n="work.title">Work</h2>
 
-      <div class="work-block">
+      <div class="work-block" data-cat="street">
         <div class="tag" data-i18n="work.street">Street Art</div>
         <div class="gallery" aria-label="Street Art gallery">
           <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8384.JPG?raw=true" alt="Street art 8384" loading="lazy" />
@@ -189,7 +193,7 @@
         </div>
       </div>
 
-      <div class="work-block">
+      <div class="work-block" data-cat="retouch">
         <div class="tag" data-i18n="work.retouch">Retouch</div>
         <div class="gallery" aria-label="Retouch gallery">
           <img src="https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8401.JPG?raw=true" alt="Retouch 8401" loading="lazy" />
@@ -219,10 +223,13 @@
 
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="image viewer">
     <button class="btn close" aria-label="close" title="Close">✕</button>
+    <button class="btn nav-btn prev" title="Prev" aria-label="previous">◀</button>
+    <button class="btn nav-btn next" title="Next" aria-label="next">▶</button>
     <img alt="preview" />
   </div>
 
   <script>
+    // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(a=>{
       a.addEventListener('click', e=>{
         const id=a.getAttribute('href');
@@ -231,8 +238,10 @@
       });
     });
 
+    // Year
     document.getElementById('year').textContent=new Date().getFullYear();
 
+    // Reveal
     const io=new IntersectionObserver(entries=>{
       entries.forEach(ent=>{
         if(ent.isIntersecting){ ent.target.classList.add('visible'); io.unobserve(ent.target);} 
@@ -240,17 +249,90 @@
     },{threshold:.14});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
+    // Lightbox + navigation + swipe
     const lb=document.getElementById('lightbox');
     const lbImg=lb.querySelector('img');
     const closeBtn=lb.querySelector('.close');
-    document.querySelectorAll('.gallery img').forEach(img=>{
-      img.addEventListener('click',()=>{ lbImg.src=img.src; lb.classList.add('open'); });
+    const prevBtn=lb.querySelector('.prev');
+    const nextBtn=lb.querySelector('.next');
+    const allImgs=[...document.querySelectorAll('.gallery img')];
+    let idx=-1;
+
+    function resetTransform(){
+      scale=1; panX=0; panY=0;
+      lbImg.style.transform='';
+      lbImg.style.cursor='grab';
+    }
+
+    function openAt(i){
+      idx=i;
+      lbImg.src=allImgs[idx].src;
+      lb.classList.add('open');
+      resetTransform();
+    }
+    allImgs.forEach((img,i)=>img.addEventListener('click',()=>openAt(i)));
+
+    function step(d){
+      if(idx<0) return;
+      idx=(idx+d+allImgs.length)%allImgs.length;
+      lbImg.src=allImgs[idx].src;
+      resetTransform();
+    }
+
+    prevBtn.addEventListener('click',()=>step(-1));
+    nextBtn.addEventListener('click',()=>step(1));
+
+    document.addEventListener('keydown',e=>{
+      if(!lb.classList.contains('open')) return;
+      if(e.key==='Escape') closeLB();
+      if(e.key==='ArrowRight') step(1);
+      if(e.key==='ArrowLeft')  step(-1);
     });
+
+    let touchX=0;
+    lb.addEventListener('touchstart',e=>{ touchX=e.changedTouches[0].clientX; },{passive:true});
+    lb.addEventListener('touchend',e=>{
+      const dx=e.changedTouches[0].clientX - touchX;
+      if(Math.abs(dx)>40) step(dx<0?1:-1);
+    },{passive:true});
+
     function closeLB(){ lb.classList.remove('open'); lbImg.src=''; }
     closeBtn.addEventListener('click',closeLB);
     lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
-    document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeLB(); });
 
+    // Zoom & pan
+    let scale=1, panX=0, panY=0, isDrag=false, lastX=0, lastY=0;
+    function applyTransform(){ lbImg.style.transform=`translate(${panX}px,${panY}px) scale(${scale})`; }
+
+    lbImg.addEventListener('wheel',e=>{
+      e.preventDefault();
+      const delta = -Math.sign(e.deltaY)*0.15;       // wheel up -> zoom in
+      const next = Math.min(4, Math.max(1, scale+delta));
+      if(next!==scale){
+        scale = next;
+        applyTransform();
+        lbImg.style.cursor = scale>1 ? 'grab' : 'zoom-in';
+      }
+    },{passive:false});
+
+    lbImg.addEventListener('mousedown',e=>{
+      if(scale<=1) return;
+      isDrag=true; lastX=e.clientX; lastY=e.clientY;
+      lbImg.style.cursor='grabbing';
+    });
+    window.addEventListener('mousemove',e=>{
+      if(!isDrag) return;
+      panX += e.clientX - lastX;
+      panY += e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY;
+      applyTransform();
+    });
+    window.addEventListener('mouseup',()=>{
+      if(!isDrag) return;
+      isDrag=false; lbImg.style.cursor='grab';
+    });
+
+    // Simple i18n
     const i18n=(function(){
       const dict={
         en:{
