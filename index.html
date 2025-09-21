@@ -29,7 +29,7 @@
     .pill{border:1px solid rgba(255,255,255,.14);padding:6px 10px;border-radius:999px;cursor:pointer;user-select:none}
     .pill.active{border-color:var(--accent);box-shadow:var(--accent-glow)}
 
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:1px solid rgba(255,255,255,.14);border-radius:12px;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:1px solid rgba(255,255,255,.14);border-radius:12px;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; position:relative; overflow:hidden}
     .btn:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:var(--accent-glow)}
     .btn.accent{background:linear-gradient(180deg,rgba(138,154,91,.16),rgba(138,154,91,.06));border-color:rgba(138,154,91,.65)}
 
@@ -38,28 +38,28 @@
     .muted{color:var(--muted)}
     .tag{color:var(--accent);text-transform:uppercase;letter-spacing:.18em;font-size:.76rem}
 
-    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:center;min-height:72vh}
+    .hero{position:relative;display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:center;min-height:72vh}
     .hero h1{font-size:clamp(28px,4.4vw,52px);line-height:1.05}
     .hero p{font-size:clamp(14px,1.4vw,18px)}
     .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
     .portrait{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 12px 40px rgba(0,0,0,.45)}
 
     .about{display:grid;grid-template-columns:1fr;gap:28px}
-    .card{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01))}
+    .card{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01)); position:relative; overflow:hidden}
 
     .services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .service{padding:22px;border-radius:16px;border:1px solid rgba(255,255,255,.08);transition:box-shadow .2s ease,border-color .2s ease}
+    .service{padding:22px;border-radius:16px;border:1px solid rgba(255,255,255,.08);transition:box-shadow .2s ease,border-color .2s ease; position:relative; overflow:hidden}
     .service:hover{border-color:var(--accent);box-shadow:var(--accent-glow)}
 
     .process{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
     .step{padding:18px 16px;border:1px dashed rgba(255,255,255,.14);border-radius:14px}
 
     /* Scroll-snap carousel */
-    .carousel{position:relative;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:8px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));box-shadow:0 8px 30px rgba(0,0,0,.35)}
+    .carousel{position:relative;border-radius:16px;padding:10px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));box-shadow:0 8px 30px rgba(0,0,0,.35)}
     .viewport{overflow-x:auto;overflow-y:hidden;border-radius:12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
     .track{display:flex;gap:12px;user-select:none}
-    .slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;min-height:56vh;background:#0E1524;border-radius:12px;scroll-snap-align:start}
-    .slide img{max-height:56vh;border-radius:12px;border:1px solid rgba(255,255,255,.08);user-select:none;pointer-events:none}
+    .slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;min-height:56vh;background:#0E1524;border-radius:12px;scroll-snap-align:start; position:relative; overflow:hidden}
+    .slide img{max-height:56vh;border-radius:12px;border:1px solid rgba(255,255,255,.08);user-select:none;pointer-events:none; transition:transform .25s ease}
     .dots{display:flex;gap:6px;justify-content:center;margin:10px 0 4px}
     .dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:transparent;cursor:pointer}
     .dot.active{background:var(--accent);border-color:var(--accent);box-shadow:var(--accent-glow)}
@@ -78,6 +78,78 @@
     .lightbox.open{display:flex}
     .lightbox img{max-width:92vw;max-height:86vh;border-radius:12px;border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 36px rgba(0,0,0,.6);transition:transform .05s linear;cursor:grab;touch-action:none}
     .lightbox .close{position:absolute;top:18px;right:18px}
+
+    /* === Neon Additions === */
+    @keyframes neonPulse { 
+      0%, 100% { box-shadow: 0 0 0 rgba(138,154,91,0), 0 0 0 rgba(138,154,91,0); }
+      50% { box-shadow: 0 0 18px rgba(138,154,91,.35), 0 0 36px rgba(138,154,91,.15); }
+    }
+    @keyframes glowFlicker {
+      0% { text-shadow: 0 0 0 rgba(138,154,91,0); }
+      10% { text-shadow: 0 0 8px rgba(138,154,91,.6), 0 0 18px rgba(138,154,91,.25); }
+      11% { text-shadow: 0 0 2px rgba(138,154,91,.2); }
+      20% { text-shadow: 0 0 10px rgba(138,154,91,.7), 0 0 22px rgba(138,154,91,.3); }
+      21% { text-shadow: 0 0 3px rgba(138,154,91,.25); }
+      100% { text-shadow: 0 0 10px rgba(138,154,91,.55), 0 0 24px rgba(138,154,91,.22); }
+    }
+    @keyframes sweep {
+      0% { transform: translateX(-120%) skewX(-12deg); opacity:.0; }
+      50% { opacity:.6; }
+      100% { transform: translateX(120%) skewX(-12deg); opacity:0; }
+    }
+    @keyframes orbitBorder { to { --ang: 360deg; } }
+
+    .logo .en, .logo .ru { animation: glowFlicker 2.2s ease-out 1 both; }
+    .tag { filter: drop-shadow(0 0 10px rgba(138,154,91,.35)); position: relative; }
+    .btn.accent { animation: neonPulse 2.6s ease-in-out infinite; }
+    .btn::after, .service::after, .card::after, .slide::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+      transform: translateX(-120%) skewX(-12deg); opacity: 0; pointer-events:none;
+    }
+    .btn:hover::after, .service:hover::after, .card:hover::after, .slide:hover::after { animation: sweep .9s ease; }
+
+    .carousel{ --ang:0deg; background:
+        radial-gradient(1200px 600px at 10% 0%, rgba(138,154,91,.06), rgba(255,255,255,0) 60%) no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    }
+    .carousel::before {
+      content: ""; position: absolute; inset: 0; padding: 1px; border-radius: 16px;
+      background: conic-gradient(from var(--ang), rgba(138,154,91,.0) 0%, rgba(138,154,91,.35) 15%, rgba(138,154,91,.0) 25%, rgba(138,154,91,.0) 75%, rgba(138,154,91,.35) 85%, rgba(138,154,91,.0) 100%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; border-radius: 18px; pointer-events: none;
+      animation: orbitBorder 6s linear infinite;
+    }
+    .hero::before {
+      content:""; position:absolute; inset:0; z-index:-1;
+      background: radial-gradient(600px 300px at 20% 10%, rgba(138,154,91,.10), rgba(0,0,0,0) 60%);
+      filter: blur(18px); animation: heroGlow 12s ease-in-out infinite alternate;
+    }
+    @keyframes heroGlow {
+      0% { transform: translate3d(-2%, -2%, 0) scale(1.0); opacity:.35; }
+      100%{ transform: translate3d(6%, 4%, 0) scale(1.08); opacity:.6; }
+    }
+    .reveal { opacity: 0; transform: translateY(10px) scale(.995); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.show { opacity: 1; transform: translateY(0) scale(1); }
+    nav a:hover { text-shadow: 0 0 10px rgba(138,154,91,.45); }
+
+    /* === Custom Neon Cursor (desktop only) === */
+    .cursor-dot, .cursor-ring {
+      position: fixed; top:0; left:0; pointer-events:none; z-index:100; mix-blend-mode:screen;
+      transform: translate(-50%,-50%);
+    }
+    .cursor-dot{ width:8px; height:8px; border-radius:50%; background: rgba(138,154,91,.85); box-shadow: 0 0 12px rgba(138,154,91,.8); }
+    .cursor-ring{ width:36px; height:36px; border-radius:50%; border:2px solid rgba(138,154,91,.65); box-shadow: 0 0 24px rgba(138,154,91,.35); transition: width .15s ease, height .15s ease, border-color .15s ease; }
+    .cursor-hidden{ opacity:0; transition: opacity .2s ease; }
+    .cursor-hover{ border-color: rgba(138,154,91,1); box-shadow: 0 0 32px rgba(138,154,91,.55); }
+
+    /* Magnetic hover targets */
+    .magnet{ position:relative; }
+    .magnet:hover{ filter: drop-shadow(0 0 14px rgba(138,154,91,.35)); }
+
+    /* Click ripple */
+    .ripple{ position:absolute; border-radius:50%; background: rgba(138,154,91,.35); transform: scale(0); animation: ripple .6s ease-out forwards; pointer-events:none; mix-blend-mode:screen; }
+    @keyframes ripple{ to { transform: scale(6); opacity:0; } }
   </style>
 </head>
 <body>
@@ -105,14 +177,14 @@
 
   <main>
     <!-- Hero -->
-    <section class="hero container" id="hero">
+    <section class="hero container reveal" id="hero">
       <div>
         <div class="tag" data-i18n="tag.hero">Street Art & Photo & Retouch</div>
         <h1 data-i18n="hero.title">Street Art & Photo & Retouch with a Bold Soul</h1>
         <p class="muted" data-i18n="hero.sub">Irvine, California — open for projects in OC, SD & LA.</p>
         <div class="cta">
-          <a class="btn accent" href="#contact" data-i18n="hero.cta">Send request</a>
-          <a class="btn" href="#contact" data-i18n="hero.cta">Send request</a>
+          <a class="btn accent magnet" href="#contact" data-i18n="hero.cta">Send request</a>
+          <a class="btn magnet" href="#contact" data-i18n="hero.cta">Send request</a>
         </div>
       </div>
       <div class="portrait">
@@ -121,7 +193,7 @@
     </section>
 
     <!-- About single -->
-    <section id="about" class="container">
+    <section id="about" class="container reveal">
       <div class="about">
         <div class="card">
           <h2 data-i18n="about.title">About</h2>
@@ -131,18 +203,18 @@
     </section>
 
     <!-- Services -->
-    <section id="services" class="container">
+    <section id="services" class="container reveal">
       <h2 data-i18n="services.title">Services</h2>
       <div class="services">
-        <div class="service">
+        <div class="service magnet">
           <h3 data-i18n="services.s1">Photography</h3>
           <p class="muted" data-i18n="services.s1d">Portraits, events, product visuals with a street touch.</p>
         </div>
-        <div class="service">
+        <div class="service magnet">
           <h3 data-i18n="services.s2">Retouch</h3>
           <p class="muted" data-i18n="services.s2d">Clean, natural retouching for editorial & commercial work.</p>
         </div>
-        <div class="service">
+        <div class="service magnet">
           <h3 data-i18n="services.s3">Street Art</h3>
           <p class="muted" data-i18n="services.s3d">Murals & lettering, bold textures, urban aesthetics.</p>
         </div>
@@ -150,7 +222,7 @@
     </section>
 
     <!-- Process -->
-    <section id="process" class="container">
+    <section id="process" class="container reveal">
       <h2 data-i18n="process.title">Process</h2>
       <div class="process">
         <div class="step"><strong data-i18n="process.p1">Discovery</strong><div class="muted" data-i18n="process.p1d">Brief, goals, scope.</div></div>
@@ -161,7 +233,7 @@
     </section>
 
     <!-- Work: scroll-snap carousels -->
-    <section id="work" class="container">
+    <section id="work" class="container reveal">
       <h2 data-i18n="work.title">Work</h2>
 
       <div class="work-block" data-cat="street">
@@ -182,14 +254,14 @@
     </section>
 
     <!-- Contact -->
-    <section id="contact" class="container">
+    <section id="contact" class="container reveal">
       <h2 data-i18n="contact.title">Contact</h2>
       <p class="muted" data-i18n="contact.desc">Send a short brief and your preferred dates — I will reply soon.</p>
       <form onsubmit="event.preventDefault(); alert(i18n.t('contact.thanks')); this.reset();">
         <input name="name" placeholder="Name / Имя" aria-label="name" required />
         <input type="email" name="email" placeholder="Email" aria-label="email" required />
         <textarea name="message" placeholder="Message / Сообщение" aria-label="message" required></textarea>
-        <button class="btn accent" type="submit" data-i18n="contact.send">Send / Отправить</button>
+        <button class="btn accent magnet" type="submit" data-i18n="contact.send">Send / Отправить</button>
       </form>
     </section>
 
@@ -203,6 +275,10 @@
     <button class="btn close" aria-label="close" title="Close">✕</button>
     <img alt="preview" />
   </div>
+
+  <!-- Custom Cursor (desktop) -->
+  <div class="cursor-dot" id="cDot"></div>
+  <div class="cursor-ring" id="cRing"></div>
 
   <script>
     // Smooth scroll
@@ -297,10 +373,18 @@
     // Build scroll-snap carousel
     function buildCarousel(viewport, track, dots, urls){
       urls.forEach(u=>{
-        const slide=document.createElement('div'); slide.className='slide';
+        const slide=document.createElement('div'); slide.className='slide magnet';
         const img=new Image(); img.src=u; img.alt='slide'; img.draggable=false;
         slide.appendChild(img); track.appendChild(slide);
         slide.addEventListener('click',()=>openLightbox(urls, [...track.children].indexOf(slide)));
+        // parallax tilt on desktop
+        slide.addEventListener('mousemove', (e)=>{
+          const r=slide.getBoundingClientRect();
+          const cx=e.clientX - r.left, cy=e.clientY - r.top;
+          const px=(cx/r.width - 0.5)*6, py=(cy/r.height - 0.5)*6;
+          img.style.transform=`scale(1.02) translate(${px}px, ${py}px)`;
+        });
+        slide.addEventListener('mouseleave', ()=>{ img.style.transform=''; });
       });
       // dots + control
       function gap(){ return parseFloat(getComputedStyle(track).gap) || 0; }
@@ -315,7 +399,6 @@
       }
       viewport.addEventListener('scroll', ()=>{ requestAnimationFrame(updateDots); });
       window.addEventListener('resize', updateDots);
-      // init
       viewport.scrollLeft = 0; updateDots();
     }
 
@@ -388,6 +471,64 @@
       if(e.key==='ArrowRight') step(1);
       if(e.key==='ArrowLeft')  step(-1);
     });
+
+    // Scroll-reveal
+    (function(){
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            e.target.classList.add('show');
+            io.unobserve(e.target);
+          }
+        });
+      }, {threshold: 0.12});
+      document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+    })();
+
+    // === Neon cursor (desktop only, hide on touch) ===
+    (function(){
+      const touch = 'ontouchstart' in window || navigator.maxTouchPoints>0;
+      const dot = document.getElementById('cDot');
+      const ring = document.getElementById('cRing');
+      if(touch){ dot.style.display='none'; ring.style.display='none'; return; }
+
+      let x=window.innerWidth/2, y=window.innerHeight/2, tx=x, ty=y;
+      const lerp=(a,b,t)=>a+(b-a)*t;
+      function raf(){ x=lerp(x,tx,.18); y=lerp(y,ty,.18); ring.style.transform=`translate(${x}px,${y}px)`; dot.style.transform=`translate(${tx}px,${ty}px)`; requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+
+      window.addEventListener('mousemove',e=>{ tx=e.clientX; ty=e.clientY; dot.classList.remove('cursor-hidden'); ring.classList.remove('cursor-hidden'); });
+      window.addEventListener('mouseleave',()=>{ dot.classList.add('cursor-hidden'); ring.classList.add('cursor-hidden'); });
+
+      // Magnetic hover
+      document.querySelectorAll('.magnet').forEach(el=>{
+        const strength = 14;
+        el.addEventListener('mousemove',e=>{
+          const r=el.getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height/2;
+          const dx=(e.clientX-cx)/r.width, dy=(e.clientY-cy)/r.height;
+          el.style.transform=`translate(${dx*strength}px, ${dy*strength}px)`;
+          ring.classList.add('cursor-hover'); ring.style.width='48px'; ring.style.height='48px';
+        });
+        el.addEventListener('mouseleave',()=>{
+          el.style.transform=''; ring.classList.remove('cursor-hover'); ring.style.width='36px'; ring.style.height='36px';
+        });
+      });
+
+      // Click ripple on interactive
+      function addRipple(e){
+        const target = e.currentTarget;
+        const r=target.getBoundingClientRect();
+        const ripple=document.createElement('span');
+        ripple.className='ripple';
+        ripple.style.left=(e.clientX - r.left)+'px';
+        ripple.style.top =(e.clientY - r.top)+'px';
+        target.appendChild(ripple);
+        setTimeout(()=>ripple.remove(), 650);
+      }
+      document.querySelectorAll('.btn, .slide').forEach(el=>{
+        el.addEventListener('click', addRipple);
+      });
+    })();
   </script>
 </body>
 </html>
