@@ -44,7 +44,6 @@
     .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
     .portrait{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 12px 40px rgba(0,0,0,.45)}
 
-    /* Single About card */
     .about{display:grid;grid-template-columns:1fr;gap:28px}
     .card{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01))}
 
@@ -58,7 +57,7 @@
     /* Modern drag carousel */
     .carousel{position:relative;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:8px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));box-shadow:0 8px 30px rgba(0,0,0,.35)}
     .viewport{overflow:hidden;border-radius:12px}
-    .track{display:flex;gap:12px;will-change:transform;cursor:grab}
+    .track{display:flex;gap:12px;will-change:transform;cursor:grab;touch-action:pan-y;}
     .slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;min-height:56vh;background:#0E1524;border-radius:12px}
     .slide img{max-height:56vh;border-radius:12px;border:1px solid rgba(255,255,255,.08);user-select:none;pointer-events:none}
     .dots{display:flex;gap:6px;justify-content:center;margin:10px 0 4px}
@@ -77,7 +76,7 @@
     /* Lightbox */
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:80}
     .lightbox.open{display:flex}
-    .lightbox img{max-width:92vw;max-height:86vh;border-radius:12px;border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 36px rgba(0,0,0,.6);transition:transform .05s linear;cursor:grab}
+    .lightbox img{max-width:92vw;max-height:86vh;border-radius:12px;border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 36px rgba(0,0,0,.6);transition:transform .05s linear;cursor:grab;touch-action:none}
     .lightbox .close{position:absolute;top:18px;right:18px}
   </style>
 </head>
@@ -161,7 +160,7 @@
       </div>
     </section>
 
-    <!-- Work: modern carousels -->
+    <!-- Work: carousels -->
     <section id="work" class="container">
       <h2 data-i18n="work.title">Work</h2>
 
@@ -269,7 +268,7 @@
     i18n.init();
     document.querySelectorAll('.lang-switch .pill').forEach(p=>p.addEventListener('click',()=>i18n.set(p.dataset.lang)));
 
-    // Data sets
+    // Data
     const streetURLs=[
       "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8384.JPG?raw=true",
       "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8385.JPG?raw=true",
@@ -295,14 +294,13 @@
       "https://github.com/AlenaSprite/borchov-assets/blob/main/IMG_8407.JPG?raw=true"
     ];
 
-    // Build modern draggable carousel with inertia + dots
+    // Build draggable carousel with directional lock + inertia
     function makeCarousel(trackEl, dotsEl, urls){
-      // build slides
+      // slides
       urls.forEach(u=>{
         const slide=document.createElement('div'); slide.className='slide';
         const img=new Image(); img.src=u; img.alt='slide'; img.draggable=false;
         slide.appendChild(img); trackEl.appendChild(slide);
-        // open in lightbox
         slide.addEventListener('click',()=>openLightbox(urls, [...trackEl.children].indexOf(slide)));
       });
       // dots
@@ -311,14 +309,14 @@
         d.addEventListener('click',()=>goTo(i));
       });
 
-      let index=0, x=0, startX=0, isDown=false, vx=0, lastT=0, lastX=0, raf=null;
-      const slideW = ()=>trackEl.clientWidth + 12; // include gap
+      let index=0, x=0, startX=0, startY=0, isDown=false, vx=0, lastT=0, lastX=0, raf=null, horiz=false;
+      const slideW = ()=>trackEl.clientWidth + 12;
       function setX(val){ x=val; trackEl.style.transform=`translateX(${x}px)`; }
-      function clamp(val){ const max=0; const min=-(slideW()*(urls.length-1)); return Math.max(Math.min(val,max),min); }
-      function snap(){
-        index = Math.round(-x / slideW());
-        goTo(index);
+      function clamp(val){
+        const max=0; const min=-(slideW()*(urls.length-1));
+        return Math.max(Math.min(val,max),min);
       }
+      function snap(){ index = Math.round(-x / slideW()); goTo(index); }
       function goTo(i){
         index = Math.max(0, Math.min(urls.length-1, i));
         x = -index * slideW();
@@ -333,43 +331,60 @@
           if(!lastT) lastT=t;
           const dt=Math.min(32, t-lastT);
           lastT=t;
-          // friction
           vx *= 0.94;
           x += vx * dt;
           if(Math.abs(vx)<0.02){ snap(); return; }
-          if(x>0 || x<-(slideW()*(urls.length-1))){ vx*=0.6; } // resistance on edges
+          if(x>0 || x<-(slideW()*(urls.length-1))){ vx*=0.6; } // edge resistance
           setX(x);
           raf=requestAnimationFrame(frame);
         }
         raf=requestAnimationFrame(frame);
       }
+
       function pointerDown(e){
-        isDown=true;
+        isDown=true; horiz=false;
         trackEl.style.cursor='grabbing';
         startX = (e.touches? e.touches[0].clientX : e.clientX);
-        lastX = startX; lastT = performance.now();
-        vx=0;
+        startY = (e.touches? e.touches[0].clientY : e.clientY);
+        lastX = startX; lastT = performance.now(); vx=0;
         cancelAnimationFrame(raf);
       }
       function pointerMove(e){
         if(!isDown) return;
-        const cur = (e.touches? e.touches[0].clientX : e.clientX);
-        const dx = cur - lastX;
+        const curX = (e.touches? e.touches[0].clientX : e.clientX);
+        const curY = (e.touches? e.touches[0].clientY : e.clientY);
+        const dx = curX - lastX;
+        const dy = curY - startY;
+
+        // Decide direction
+        if(!horiz){
+          if(Math.abs(curX-startX) > 8 && Math.abs(curX-startX) > Math.abs(dy)){
+            horiz = true;
+          }else{
+            return; // let page scroll vertically
+          }
+        }
+        // Once locked horizontally, prevent native scroll while moving
+        if(e.cancelable) e.preventDefault();
+
         const dt = Math.max(1, performance.now() - lastT);
-        vx = dx / dt; // px per ms
-        lastX = cur; lastT = performance.now();
+        vx = dx / dt;
+        lastX = curX; lastT = performance.now();
         setX(clamp(x + dx));
       }
       function pointerUp(){
         if(!isDown) return;
         isDown=false; trackEl.style.cursor='grab';
-        inertia();
+        if(horiz){ inertia(); } // if we dragged horizontally, apply inertia; else do nothing
       }
+
       trackEl.addEventListener('mousedown',pointerDown);
       window.addEventListener('mousemove',pointerMove);
       window.addEventListener('mouseup',pointerUp);
+
       trackEl.addEventListener('touchstart',pointerDown,{passive:true});
-      trackEl.addEventListener('touchmove',pointerMove,{passive:true});
+      // IMPORTANT: touchmove must be non-passive so we can preventDefault()
+      trackEl.addEventListener('touchmove',pointerMove,{passive:false});
       trackEl.addEventListener('touchend',pointerUp,{passive:true});
 
       // init
@@ -380,7 +395,7 @@
     makeCarousel(document.getElementById('street-track'), document.getElementById('street-dots'), streetURLs);
     makeCarousel(document.getElementById('retouch-track'), document.getElementById('retouch-dots'), retouchURLs);
 
-    // Lightbox + zoom/pan
+    // Lightbox + swipe + zoom/pan
     const lb=document.getElementById('lightbox');
     const lbImg=lb.querySelector('img');
     const closeBtn=lb.querySelector('.close');
@@ -396,8 +411,41 @@
     function closeLB(){ lb.classList.remove('open'); }
     closeBtn.addEventListener('click',closeLB);
     lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
-    document.addEventListener('keydown',e=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLB(); });
+    document.addEventListener('keydown',e=>{ 
+      if(!lb.classList.contains('open')) return;
+      if(e.key==='Escape') closeLB();
+      if(e.key==='ArrowRight') step(1);
+      if(e.key==='ArrowLeft') step(-1);
+    });
 
+    function step(d){
+      currentIndex=(currentIndex+d+currentSet.length)%currentSet.length;
+      lbImg.src=currentSet[currentIndex];
+      resetTransform();
+    }
+
+    // Swipe in lightbox
+    let sx=0, sy=0, lightboxHoriz=false;
+    lb.addEventListener('touchstart',e=>{ 
+      sx=e.changedTouches[0].clientX; 
+      sy=e.changedTouches[0].clientY; 
+      lightboxHoriz=false;
+    },{passive:true});
+    lb.addEventListener('touchmove',e=>{
+      const cx=e.changedTouches[0].clientX, cy=e.changedTouches[0].clientY;
+      const dx=cx-sx, dy=cy-sy;
+      if(!lightboxHoriz){
+        if(Math.abs(dx)>8 && Math.abs(dx)>Math.abs(dy)) lightboxHoriz=true;
+        else return; // allow vertical scroll on mobile while info is visible
+      }
+      if(e.cancelable) e.preventDefault();
+    },{passive:false});
+    lb.addEventListener('touchend',e=>{
+      const dx=e.changedTouches[0].clientX - sx;
+      if(Math.abs(dx)>40){ step(dx<0?1:-1); }
+    },{passive:true});
+
+    // Zoom & pan
     let scale=1, panX=0, panY=0, isDrag=false, lastX=0, lastY=0;
     function resetTransform(){ scale=1; panX=panY=0; lbImg.style.transform=''; lbImg.style.cursor='grab'; }
     function applyTransform(){ lbImg.style.transform=`translate(${panX}px,${panY}px) scale(${scale})`; }
